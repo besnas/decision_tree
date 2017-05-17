@@ -3,11 +3,14 @@ import tree
 import csv
 
 class Analyzer:
-	def __init__(self, file_name, prune=False):
+	def __init__(self, file_name, prune, firstA, secondA):
 		self.samples = data.Samples(file_name)
 		self.builder = tree.Builder()
 		self.file_name = file_name.split('/')[-1]
 		self.prune = prune
+		self.firstAttr = int(firstA)
+		self.secondAttr = int(secondA)
+		print self.secondAttr
 		if prune:
 			print "With pruning!"
 	
@@ -16,13 +19,19 @@ class Analyzer:
 		
 		"""generate sample sets"""
 		samples, length = [], 0
-		for i in range(10):
-			(tr, te) = self.samples.random_split()
-			samples.append((tr, te))
-			length = len(tr)
-			length2 = len(te)
-			print length2
-		
+		#for i in range(10):
+		(tr, te) = self.samples.random_split()
+		samples.append((tr, te))
+		data_set = self.samples.data_r()
+		binary_class = self.samples.binary_class()
+		#print binary_class[2]
+		length = len(tr)
+		length2 = len(te)
+		print length2
+		self.samples.binary_class()
+
+
+
 		step = self.step(length)
 		
 		"""calculate averages"""
@@ -45,6 +54,33 @@ class Analyzer:
 			per[i] = self.test(tree, te) / float(length2)
 			print  per[i]
 			self.write(averages, average_nodes, per)
+
+		#plot graphics
+		attr_changed = []
+		class_changed = []
+		attr_changed = self.samples.convert_to_num()
+		class_changed = self.samples.binary_class()
+		chart = []
+		i =0
+		while i < len(self.samples.attributes()[self.secondAttr]):
+			chart.append([0]*len(self.samples.attributes()[self.firstAttr]))
+			i+=1
+		k =0
+
+		#print class_changed
+		k=0
+		#for row in attr_changed:
+		for k in range(100):
+			if class_changed[k] == "unacc":
+				chart[attr_changed[k][self.secondAttr]][attr_changed[k][self.firstAttr]] = "X"
+			else:
+				chart[attr_changed[k][self.secondAttr]][attr_changed[k][self.firstAttr]] = "O"
+			#k+=1
+		for row in chart:
+			print row
+
+
+
 	
 	def write(self, ave, node_ave, per):
 		"""outputs averages"""
