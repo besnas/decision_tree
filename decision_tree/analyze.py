@@ -1,6 +1,8 @@
 import data
 import tree
 import csv
+import matplotlib.pyplot as plt
+import numpy as np
 
 class Analyzer:
 	def __init__(self, file_name, prune, firstA, secondA):
@@ -30,6 +32,16 @@ class Analyzer:
 		print length2
 		self.samples.binary_class()
 
+		x = np.random.rand(10)
+		y = np.random.rand(10)
+		z = np.sqrt(x ** 2 + y ** 2)
+
+		fig = plt.figure()
+		ax = fig.add_axes([0, 0, 1, 1])
+		#plt.plot(x, y)
+		#plt.scatter(1,1, marker=(5, 2), s=30, linewidths=3)
+		#plt.scatter(1,1, marker="o", s=20, linewidths=1)
+		#plt.scatter(x, y, s=80, c=z, marker=">")
 
 
 		step = self.step(length)
@@ -61,23 +73,43 @@ class Analyzer:
 		attr_changed = self.samples.convert_to_num()
 		class_changed = self.samples.binary_class()
 		chart = []
-		i =0
+		width1 = []
+		width2 =[]
+		i = 0
+		k = 0
 		while i < len(self.samples.attributes()[self.secondAttr]):
 			chart.append([0]*len(self.samples.attributes()[self.firstAttr]))
+			width1.append([])
+			width2.append([])
+			while k < len(self.samples.attributes()[self.firstAttr]):
+				width1[i].append(20)
+				width2[i].append(20)
+				k+=1
+			k=0
 			i+=1
 		k =0
 
 		#print class_changed
 		k=0
 		#for row in attr_changed:
+
 		for k in range(100):
 			if class_changed[k] == "unacc":
+				plt.scatter(attr_changed[k][self.firstAttr], attr_changed[k][self.secondAttr], marker="+", s=width1[attr_changed[k][self.secondAttr]][attr_changed[k][self.firstAttr]], color ='red')
+				width1[attr_changed[k][self.secondAttr]][attr_changed[k][self.firstAttr]] += 100
 				chart[attr_changed[k][self.secondAttr]][attr_changed[k][self.firstAttr]] = "X"
 			else:
+				plt.scatter(attr_changed[k][self.firstAttr], attr_changed[k][self.secondAttr], marker=(5,2), s=width2[attr_changed[k][self.secondAttr]][attr_changed[k][self.firstAttr]], color ='blue')
+				width2[attr_changed[k][self.secondAttr]][attr_changed[k][self.firstAttr]] += 100
 				chart[attr_changed[k][self.secondAttr]][attr_changed[k][self.firstAttr]] = "O"
 			#k+=1
-		for row in chart:
+		for row in width1:
 			print row
+		for row in width2:
+			print row
+
+		plt.show()
+
 
 
 
